@@ -1,0 +1,23 @@
+#include "mi_sofle.dtsi"
+
+// Pines traducidos desde g_ADigitalPinMap (SuperMini_nRF52840, core pdcook).
+// Columnas = salidas, filas = entradas con pull-down (diode-direction col2row).
+
+&kscan0 {
+    col-gpios
+        = <&gpio1 15 GPIO_ACTIVE_HIGH>   // C0: Arduino 14 = P1.15
+        , <&gpio1 1  GPIO_ACTIVE_HIGH>   // C1: Arduino 18 = P1.01
+        , <&gpio0 11 GPIO_ACTIVE_HIGH>   // C2: Arduino 7  = P0.11
+        , <&gpio0 24 GPIO_ACTIVE_HIGH>   // C3: Arduino 5  = P0.24
+        , <&gpio1 6  GPIO_ACTIVE_HIGH>   // C4: Arduino 9  = P1.06
+        , <&gpio0 29 GPIO_ACTIVE_HIGH>   // C5: Arduino 16 = P0.29
+        ;
+
+    row-gpios
+        = <&gpio0 31 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // R0: Arduino 17 = P0.31
+        , <&gpio0 2  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // R1: Arduino 15 = P0.02
+        , <&gpio1 11 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // R2: Arduino 12 = P1.11
+        , <&gpio0 9  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // R3: Arduino 10 = P0.09
+        , <&gpio1 7  (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>   // R4: Arduino 20 = P1.07
+        ;
+};

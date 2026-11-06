@@ -25,7 +25,7 @@
 &kp GRAVE  &kp F1        &kp F2        &kp F3        &kp F4      &kp F5        &kp HOME      &kp PG_UP     &kp UP    &kp PG_DN  &kp END    &ext_power EP_TOG
 &kp PIPE   &kp F6        &kp F7        &kp F8        &kp F9      &kp F10       &kp DEL       &kp LEFT      &kp DOWN  &kp RIGHT  &kp COLON  &kp DQT
 &kp QMARK  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_CLR  &bootloader   &kp C_VOL_DN  &kp C_VOL_UP  &kp LT    &kp GT     &kp LBRC   &kp RBRC
-           &trans  &trans  &trans  &trans  &trans    &bootloader  &trans  &trans  &trans  &trans
+           &trans  &trans  &trans  &trans  &trans    &bootloader  &trans  &trans  &trans  &sys_reset
             >;
         };
     };

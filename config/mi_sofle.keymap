@@ -1,5 +1,7 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/ext_power.h>
 
 / {
     keymap {
@@ -12,18 +14,18 @@
 &kp TILDE  &kp Q   &kp W   &kp E    &kp R     &kp T      &kp Y     &kp U   &kp I      &kp O     &kp P      &kp FSLH
 &kp BSLH   &kp A   &kp S   &kp D    &kp F     &kp G      &kp H     &kp J   &kp K      &kp L     &kp SEMI   &kp SQT
 &kp FSLH   &kp Z   &kp X   &kp C    &kp V     &kp B      &kp N     &kp M   &kp COMMA  &kp DOT   &kp LBKT   &kp RBKT
-           &kp LCTRL  &kp LALT  &kp LGUI  &kp LSHFT  &kp TAB    &mo 1  &kp SPACE  &kp BSPC  &kp RET  &kp ESC
+           &kp LCTRL  &kp LALT  &kp LGUI  &kp LSHFT  &kp TAB    &kp RET  &kp SPACE  &kp BSPC  &mo 1  &kp ESC
             >;
         };
 
         mo {
             display-name = "MO";
             bindings = <
-&kp EXCL   &kp AT  &kp HASH  &kp DLLR  &kp PRCNT  &kp CARET  &kp AMPS  &kp STAR  &kp LPAR   &kp RPAR  &kp UNDER  &kp PLUS
-&kp GRAVE  &kp ESC &kp W     &kp E     &kp R      &kp T      &kp Y     &kp U     &kp UP     &kp O     &kp P      &kp QMARK
-&kp PIPE   &kp A   &kp S     &kp D     &kp F      &kp G      &kp H     &kp LEFT  &kp DOWN   &kp RIGHT &kp COLON  &kp DQT
-&kp QMARK  &kp Z   &kp X     &kp C     &kp V      &kp B      &kp N     &kp M     &kp LT     &kp GT    &kp LBRC   &kp RBRC
-           &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &none  &trans
+&kp EXCL   &kp AT        &kp HASH      &kp DLLR      &kp PRCNT   &kp CARET     &kp AMPS      &kp STAR      &kp LPAR  &kp RPAR   &kp UNDER  &kp PLUS
+&kp GRAVE  &kp F1        &kp F2        &kp F3        &kp F4      &kp F5        &kp HOME      &kp PG_UP     &kp UP    &kp PG_DN  &kp END    &ext_power EP_TOG
+&kp PIPE   &kp F6        &kp F7        &kp F8        &kp F9      &kp F10       &kp DEL       &kp LEFT      &kp DOWN  &kp RIGHT  &kp COLON  &kp DQT
+&kp QMARK  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_CLR  &bootloader   &kp C_VOL_DN  &kp C_VOL_UP  &kp LT    &kp GT     &kp LBRC   &kp RBRC
+           &trans  &trans  &trans  &trans  &trans    &bootloader  &trans  &trans  &trans  &trans
             >;
         };
     };

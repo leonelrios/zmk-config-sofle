@@ -1,6 +1,6 @@
 # Wireless Sofle · ZMK config
 
-[ZMK](https://zmk.dev) configuration for my wireless split Sofle. The whole keyboard is 3D printed and hand-wired, with two nRF52840 boards (SuperMini, `nice_nano_v2` compatible) and a 128×32 OLED display on the right half.
+[ZMK](https://zmk.dev) configuration for my wireless split Sofle. The whole keyboard is 3D printed and hand-wired, with two nRF52840 boards (SuperMini, `nice_nano_v2` compatible). The battery level of each half is shown on a small ESP32 desk robot.
 
 ![My Sofle](docs/sofle.jpg)
 
@@ -23,10 +23,9 @@ QWERTY with a number row on top. All modifiers (`Ctrl`, `Alt`, `Gui`, `Shift`) s
 | Top row | Shifted symbols (`! @ # $ % ^ & * ( ) _ +`) without pressing Shift |
 | Left side | `F1`–`F10` |
 | Right side | Inverted-T arrows (`↑ ← ↓ →`), plus `Home`, `End`, `PgUp`, `PgDn` and `Del` |
-| `BT 0` / `BT 1` / `BT 2` | Select a Bluetooth profile (up to 3 paired devices) |
+| `BT 0` / `BT 1` / `BT 2` | Select a Bluetooth profile (`BT 2` is used by the robot, see below) |
 | `BT clear` | Clear the pairing of the **active** profile |
 | `Vol−` / `Vol+` | System volume |
-| `OLED power` | Toggle external power (`ext_power`), handy for cutting power to the OLED to save battery |
 | `Boot (left)` | Put the **left** half into bootloader mode for flashing |
 | `Boot (right)` / `Reset (right)` | Bootloader or reset for the **right** half |
 | `▽` | Transparent: falls through to the BASE layer |
@@ -41,7 +40,6 @@ The keymap uses **US** layout keycodes. If your OS uses a different layout (e.g.
 |---|---|---|
 | Board | nRF52840 SuperMini (`nice_nano_v2`) | nRF52840 SuperMini (`nice_nano_v2`) |
 | Role | **Central**: connects to the computer via USB or Bluetooth | Peripheral: connects to the left half |
-| Display | — | SSD1306 128×32 OLED over I²C (SDA `P0.29`, SCL `P1.13`) |
 | Case | 3D printed | 3D printed |
 | Matrix | 5 rows × 6 columns | 5 rows × 6 columns |
 
@@ -74,24 +72,50 @@ Since there's no PCB (the keyboard is 3D printed and hand-wired), the pins don't
 
 </details>
 
-## Display and battery
+## Battery
 
-The OLED uses the [zmk-nice-oled](https://github.com/mctechnology17/zmk-nice-oled) module (pinned to `v0.0.2`) with the vertical screen. It shows a static image instead of an animation, which uses less power, and the image is drawn off-screen so no icon is visible. To bring it back, remove `CONFIG_NICE_OLED_WIDGET_ANIMATION_PERIPHERAL_CUSTOM_X=300` from `config/mi_sofle_right.conf`.
+The keyboard goes into deep sleep after **15 min** of inactivity and wakes up on any key press (`config/mi_sofle.conf`).
 
-Power saving (`config/mi_sofle.conf`):
+The left half (central) fetches the right half's battery level and publishes **both** over Bluetooth:
 
-- The display turns off after **30 s** of inactivity.
-- The keyboard goes into deep sleep after **15 min** and wakes up on any key press.
+```
+CONFIG_ZMK_BATTERY_REPORTING=y
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y
+CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY=y
+```
+
+They show up as two standard Battery Level characteristics (`0x2A19`); the right half's one has the description `Peripheral`.
+
+## Battery robot
+
+A small desk robot shows the battery level of each half. It's an ESP32-C3 SuperMini with a 0.96" SSD1306 OLED (128×64) and a TTP223 touch sensor, powered over USB. It has three screens: animated faces, weather, and keyboard battery (`L` / `R` with an icon and percentage). A short touch switches screens, a long touch changes the face.
+
+The robot connects to the keyboard over Bluetooth as one more host, on its own profile (`BT 2`), and subscribes to both battery levels. ZMK can stay connected to several hosts at once (only the active profile receives keystrokes), so the robot stays connected while you type on the computer.
+
+**Pairing (once):**
+
+1. On the keyboard, select an empty profile: `MO 1` + `BT 2`.
+2. Power on the robot. It looks for a device named `Sofle` and pairs automatically.
+3. Switch back to your computer's profile: `MO 1` + `BT 0`.
+
+When the keyboard goes to sleep the robot shows the last known values and reconnects when it wakes up. If it doesn't, switching to `BT 2` and back forces it.
+
+The robot code lives in [`robot/`](robot/). To build it in Arduino IDE:
+
+- Install **NimBLE-Arduino 2.x**, **Adafruit SSD1306** and **ArduinoJson** from the Library Manager.
+- Set *Tools → Partition Scheme → Huge APP (3MB No OTA)*: WiFi + Bluetooth don't fit in the default partition.
+- Copy `secrets.example.h` to `secrets.h` and fill in your WiFi network. `secrets.h` is git-ignored.
 
 ## Repo structure
 
 ```
-boards/shields/mi_sofle/   Custom shield: matrix, pins and OLED
+boards/shields/mi_sofle/   Custom shield: matrix and pins
 config/mi_sofle.keymap     Keymap
-config/mi_sofle.conf       Shared options (sleep, timeouts)
-config/mi_sofle_right.conf OLED options (right half only)
-config/west.yml            ZMK (v0.3) and zmk-nice-oled versions
+config/mi_sofle.conf       Shared options (sleep, battery reporting)
+config/mi_sofle_right.conf Right half options
+config/west.yml            ZMK version (v0.3)
 build.yaml                 Firmware targets built by GitHub Actions
+robot/                     ESP32 battery robot (Arduino)
 ```
 
 ## Building and flashing
@@ -100,7 +124,7 @@ build.yaml                 Firmware targets built by GitHub Actions
 2. Plug one half in via USB and enter the bootloader: double-tap the reset button, or press `MO 1` + that half's `Boot` key.
 3. A USB drive shows up. Copy the matching `.uf2` onto it:
    - `mi_sofle_left-nice_nano_v2-zmk.uf2` → left half
-   - `mi_sofle_right nice_oled-nice_nano_v2-zmk.uf2` → right half
+   - `mi_sofle_right-nice_nano_v2-zmk.uf2` → right half
 4. Repeat with the other half.
 
 If the halves won't connect to each other, flash `settings_reset-nice_nano_v2-zmk.uf2` onto **both** halves, then flash the regular firmware on each side again.

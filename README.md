@@ -1,6 +1,6 @@
 # Wireless Sofle · ZMK config
 
-[ZMK](https://zmk.dev) configuration for my wireless split Sofle: two nRF52840 boards (SuperMini, `nice_nano_v2` compatible), a hand-wired matrix, and a 128×32 OLED display on the right half.
+[ZMK](https://zmk.dev) configuration for my wireless split Sofle. The whole keyboard is 3D printed and hand-wired, with two nRF52840 boards (SuperMini, `nice_nano_v2` compatible) and a 128×32 OLED display on the right half.
 
 ![My Sofle](docs/sofle.jpg)
 
@@ -42,11 +42,12 @@ The keymap uses **US** layout keycodes. If your OS uses a different layout (e.g.
 | Board | nRF52840 SuperMini (`nice_nano_v2`) | nRF52840 SuperMini (`nice_nano_v2`) |
 | Role | **Central**: connects to the computer via USB or Bluetooth | Peripheral: connects to the left half |
 | Display | — | SSD1306 128×32 OLED over I²C (SDA `P0.29`, SCL `P1.13`) |
+| Case | 3D printed | 3D printed |
 | Matrix | 5 rows × 6 columns | 5 rows × 6 columns |
 
 Row 4 holds the thumb keys: 5 per side (C0 is unused on the left and C5 on the right). Diodes are `col2row`, and debounce is 20 ms for both press and release.
 
-Since the keyboard is hand-wired, the pins don't match an official Sofle PCB, and each half has its own:
+Since there's no PCB (the keyboard is 3D printed and hand-wired), the pins don't match an official Sofle PCB, and each half has its own:
 
 <details>
 <summary>Matrix pins</summary>
